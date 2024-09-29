@@ -1,13 +1,13 @@
 CREATE DATABASE studymaster;
 \c studymaster;
 
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS users (
    id serial PRIMARY KEY,
    first_name VARCHAR(255) NOT NULL,
    last_name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO user(id, first_name, last_name)
+INSERT INTO users(id, first_name, last_name)
 VALUES 
    (1, 'Luisa', 'Colon'),
 	(2, 'Ismail', 'Southern'),
