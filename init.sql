@@ -4,59 +4,73 @@ CREATE DATABASE studymaster;
 
 -- Tabelle für Benutzer
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(255),
-    last_name VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+                                     id SERIAL PRIMARY KEY,
+                                     username VARCHAR(255) UNIQUE NOT NULL,
+                                     email VARCHAR(255) UNIQUE NOT NULL,
+                                     password VARCHAR(255) NOT NULL,
+                                     first_name VARCHAR(255),
+                                     last_name VARCHAR(255),
+                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabelle für Rollen (User Roles)
+CREATE TABLE IF NOT EXISTS roles (
+                                     id SERIAL PRIMARY KEY,
+                                     role_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Verknüpfungstabelle zwischen Benutzern und Rollen
+CREATE TABLE IF NOT EXISTS user_roles (
+                                          user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                                          role_id INT REFERENCES roles(id) ON DELETE CASCADE,
+                                          PRIMARY KEY (user_id, role_id)
+);
 
 -- Tabelle für Aufgaben (Tasks)
 CREATE TABLE IF NOT EXISTS tasks (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    due_date DATE,
-    status VARCHAR(50) DEFAULT 'open',
-    priority VARCHAR(50) DEFAULT 'medium',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+                                     id SERIAL PRIMARY KEY,
+                                     user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                                     title VARCHAR(255) NOT NULL,
+                                     description TEXT,
+                                     due_date DATE,
+                                     status VARCHAR(50) DEFAULT 'open',
+                                     priority VARCHAR(50) DEFAULT 'medium',
+                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Tabelle für Fortschritt (Progress)
 CREATE TABLE IF NOT EXISTS progress (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
-    progress_percentage DECIMAL(5, 2) DEFAULT 0,
-    points_earned INT DEFAULT 0,
-    level INT DEFAULT 1,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+                                        id SERIAL PRIMARY KEY,
+                                        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                                        task_id INT REFERENCES tasks(id) ON DELETE CASCADE,
+                                        progress_percentage DECIMAL(5, 2) DEFAULT 0,
+                                        points_earned INT DEFAULT 0,
+                                        level INT DEFAULT 1,
+                                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Tabelle für Badges (Belohnungen)
 CREATE TABLE IF NOT EXISTS badges (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    points_required INT NOT NULL
-    );
+                                      id SERIAL PRIMARY KEY,
+                                      name VARCHAR(255) NOT NULL,
+                                      description TEXT,
+                                      points_required INT NOT NULL
+);
 
 -- Tabelle für Benutzer-Badges (verliehene Badges)
 CREATE TABLE IF NOT EXISTS user_badges (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    badge_id INT REFERENCES badges(id) ON DELETE CASCADE,
-    awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+                                           id SERIAL PRIMARY KEY,
+                                           user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                                           badge_id INT REFERENCES badges(id) ON DELETE CASCADE,
+                                           awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-CREATE TABLE user_sessions (
-   session_id VARCHAR(255) PRIMARY KEY,
-   username VARCHAR(255) NOT NULL,
-   creation_time TIMESTAMP NOT NULL,
-   expiry_time TIMESTAMP NOT NULL
+-- Tabelle für User Sessions (Session Management)
+CREATE TABLE IF NOT EXISTS user_sessions (
+                                             session_id VARCHAR(255) PRIMARY KEY,
+                                             user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                                             creation_time TIMESTAMP NOT NULL,
+                                             expiry_time TIMESTAMP NOT NULL
 );
 
 -- Beispiel-Daten für Benutzer
@@ -65,6 +79,19 @@ VALUES
     ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon'),
     ('ismail', 'ismail@example.com', 'hashed_password_2', 'Ismail', 'Southern'),
     ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley');
+
+-- Beispiel-Daten für Rollen
+INSERT INTO roles (role_name)
+VALUES
+    ('admin'),
+    ('user');
+
+-- Beispiel-Daten für Benutzer-Rollen
+INSERT INTO user_roles (user_id, role_id)
+VALUES
+    (1, 1), -- Luisa ist Admin
+    (2, 2), -- Ismail ist User
+    (3, 2); -- Kory ist User
 
 -- Beispiel-Daten für Aufgaben
 INSERT INTO tasks (user_id, title, description, due_date, status, priority)
