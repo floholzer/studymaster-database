@@ -52,6 +52,13 @@ CREATE TABLE IF NOT EXISTS user_badges (
     awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+CREATE TABLE user_sessions (
+   session_id VARCHAR(255) PRIMARY KEY,
+   username VARCHAR(255) NOT NULL,
+   creation_time TIMESTAMP NOT NULL,
+   expiry_time TIMESTAMP NOT NULL
+);
+
 -- Beispiel-Daten für Benutzer
 INSERT INTO users (username, email, password, first_name, last_name)
 VALUES
