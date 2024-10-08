@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 INSERT INTO users (username, email, password, first_name, last_name, is_admin)
 VALUES
     ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon', FALSE),
+    ('adminuser', 'admin@example.com', 'hashed_password_0', 'Admin', 'User', TRUE),
     ('ismail', 'ismail@example.com', 'hashed_password_2', 'Ismail', 'Southern', FALSE),
     ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley', FALSE);
 
