@@ -2,7 +2,7 @@
 CREATE DATABASE studymaster;
 \c studymaster;
 
--- Tabelle für Benutzer
+-- Tabelle für Benutzer mit is_admin-Feld
 CREATE TABLE IF NOT EXISTS users (
                                      id SERIAL PRIMARY KEY,
                                      username VARCHAR(255) UNIQUE NOT NULL,
@@ -10,20 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
                                      password VARCHAR(255) NOT NULL,
                                      first_name VARCHAR(255),
                                      last_name VARCHAR(255),
+                                     is_admin BOOLEAN DEFAULT FALSE,
                                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabelle für Rollen (User Roles)
-CREATE TABLE IF NOT EXISTS roles (
-                                     id SERIAL PRIMARY KEY,
-                                     role_name VARCHAR(255) UNIQUE NOT NULL
-);
-
--- Verknüpfungstabelle zwischen Benutzern und Rollen
-CREATE TABLE IF NOT EXISTS user_roles (
-                                          user_id INT REFERENCES users(id) ON DELETE CASCADE,
-                                          role_id INT REFERENCES roles(id) ON DELETE CASCADE,
-                                          PRIMARY KEY (user_id, role_id)
 );
 
 -- Tabelle für Aufgaben (Tasks)
@@ -73,25 +61,13 @@ CREATE TABLE IF NOT EXISTS user_sessions (
                                              expiry_time TIMESTAMP NOT NULL
 );
 
--- Beispiel-Daten für Benutzer
-INSERT INTO users (username, email, password, first_name, last_name)
+-- Beispiel-Daten für Benutzer mit is_admin-Feld
+INSERT INTO users (username, email, password, first_name, last_name, is_admin)
 VALUES
-    ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon'),
-    ('ismail', 'ismail@example.com', 'hashed_password_2', 'Ismail', 'Southern'),
-    ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley');
-
--- Beispiel-Daten für Rollen
-INSERT INTO roles (role_name)
-VALUES
-    ('admin'),
-    ('user');
-
--- Beispiel-Daten für Benutzer-Rollen
-INSERT INTO user_roles (user_id, role_id)
-VALUES
-    (1, 1), -- Luisa ist Admin
-    (2, 2), -- Ismail ist User
-    (3, 2); -- Kory ist User
+    ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon', FALSE),
+    ('adminuser', 'admin@example.com', 'hashed_password_0', 'Admin', 'User', TRUE),
+    ('ismail', 'ismail@example.com', 'hashed_password_2', 'Ismail', 'Southern', FALSE),
+    ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley', FALSE);
 
 -- Beispiel-Daten für Aufgaben
 INSERT INTO tasks (user_id, title, description, due_date, status, priority)
