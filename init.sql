@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS user_badges (
                                            awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabelle für User Sessions (Session Management)
+-- Tabelle für User Sessions (Session Management) - werden wir höchstwahrscheinlich durch Spring Security ersetzen
 CREATE TABLE IF NOT EXISTS user_sessions (
                                              session_id VARCHAR(255) PRIMARY KEY,
                                              user_id INT REFERENCES users(id) ON DELETE CASCADE,
