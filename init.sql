@@ -23,8 +23,14 @@ CREATE TABLE IF NOT EXISTS tasks (
                                      due_date DATE,
                                      status VARCHAR(50) DEFAULT 'open',
                                      priority VARCHAR(50) DEFAULT 'medium',
+                                     ects DECIMAL(3, 1) DEFAULT 0,  -- ECTS column
+                                     points_per_submission INT DEFAULT 0,  -- Points per submission/chapter
+                                     total_submissions INT DEFAULT 0,  -- Total submissions/chapters required
+                                     completed_submissions INT DEFAULT 0,  -- Completed submissions/chapters
                                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
+ALTER TABLE tasks ADD COLUMN points_earned INT DEFAULT 0;
 
 -- Tabelle für Fortschritt (Progress)
 CREATE TABLE IF NOT EXISTS progress (
@@ -42,7 +48,8 @@ CREATE TABLE IF NOT EXISTS badges (
                                       id SERIAL PRIMARY KEY,
                                       name VARCHAR(255) NOT NULL,
                                       description TEXT,
-                                      points_required INT NOT NULL
+                                      points_required INT NOT NULL,
+                                      badge_type VARCHAR(50) DEFAULT 'standard'  -- Badge type for categorizing badges (e.g., semester completion)
 );
 
 -- Tabelle für Benutzer-Badges (verliehene Badges)
@@ -53,7 +60,7 @@ CREATE TABLE IF NOT EXISTS user_badges (
                                            awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabelle für User Sessions (Session Management) - werden wir höchstwahrscheinlich durch Spring Security ersetzen
+-- Tabelle für User Sessions (Session Management) - kann durch Spring Security ersetzt werden
 CREATE TABLE IF NOT EXISTS user_sessions (
                                              session_id VARCHAR(255) PRIMARY KEY,
                                              user_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -61,7 +68,7 @@ CREATE TABLE IF NOT EXISTS user_sessions (
                                              expiry_time TIMESTAMP NOT NULL
 );
 
--- Beispiel-Daten für Benutzer mit is_admin-Feld
+-- Beispiel-Daten für Benutzer
 INSERT INTO users (username, email, password, first_name, last_name, is_admin)
 VALUES
     ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon', FALSE),
@@ -70,11 +77,11 @@ VALUES
     ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley', FALSE);
 
 -- Beispiel-Daten für Aufgaben
-INSERT INTO tasks (user_id, title, description, due_date, status, priority)
+INSERT INTO tasks (user_id, title, description, due_date, status, priority, ects, points_per_submission, total_submissions, completed_submissions)
 VALUES
-    (1, 'Study for Math Exam', 'Prepare chapters 1-5 for the exam', '2024-09-30', 'open', 'high'),
-    (2, 'Finish Project Report', 'Complete the final report for the software project', '2024-10-10', 'in progress', 'medium'),
-    (3, 'Read History Book', 'Read chapters 4-6 of the history book', '2024-10-05', 'open', 'low');
+    (1, 'Study for Math Exam', 'Prepare chapters 1-5 for the exam', '2024-09-30', 'open', 'high', 5.0, 10, 5, 0),
+    (2, 'Finish Project Report', 'Complete the final report for the software project', '2024-10-10', 'in progress', 'medium', 2.5, 20, 3, 1),
+    (3, 'Read History Book', 'Read chapters 4-6 of the history book', '2024-10-05', 'open', 'low', 3.0, 5, 3, 0);
 
 -- Beispiel-Daten für Fortschritt
 INSERT INTO progress (user_id, task_id, progress_percentage, points_earned, level)
@@ -84,11 +91,12 @@ VALUES
     (3, 3, 30.00, 5, 1);
 
 -- Beispiel-Daten für Badges
-INSERT INTO badges (name, description, points_required)
+INSERT INTO badges (name, description, points_required, badge_type)
 VALUES
-    ('Beginner', 'Awarded for earning 10 points', 10),
-    ('Intermediate', 'Awarded for earning 50 points', 50),
-    ('Expert', 'Awarded for earning 100 points', 100);
+    ('Beginner', 'Awarded for earning 10 points', 10, 'standard'),
+    ('Intermediate', 'Awarded for earning 50 points', 50, 'standard'),
+    ('Expert', 'Awarded for earning 100 points', 100, 'standard'),
+    ('Semester Completion', 'Awarded for completing a semester', 0, 'semester_completion');
 
 -- Beispiel-Daten für Benutzer-Badges
 INSERT INTO user_badges (user_id, badge_id, awarded_at)
@@ -96,3 +104,9 @@ VALUES
     (1, 1, CURRENT_TIMESTAMP),
     (2, 1, CURRENT_TIMESTAMP),
     (2, 2, CURRENT_TIMESTAMP);
+
+-- Beispiel-Daten für User Sessions (optional)
+INSERT INTO user_sessions (session_id, user_id, creation_time, expiry_time)
+VALUES
+    ('session_1', 1, NOW(), NOW() + INTERVAL '1 day'),
+    ('session_2', 2, NOW(), NOW() + INTERVAL '1 day');
