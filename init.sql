@@ -32,6 +32,30 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 ALTER TABLE tasks ADD COLUMN points_earned INT DEFAULT 0;
 
+-- Semesters Table
+CREATE TABLE semesters (
+                           id SERIAL PRIMARY KEY,
+                           user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                           name VARCHAR(255) NOT NULL,
+                           ects DECIMAL(3, 1) NOT NULL,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Subjects Table
+CREATE TABLE subjects (
+                          id SERIAL PRIMARY KEY,
+                          semester_id INT REFERENCES semesters(id) ON DELETE CASCADE,
+                          name VARCHAR(255) NOT NULL,
+                          ects DECIMAL(3, 1) NOT NULL,
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Update Tasks Table to Link with Subjects
+ALTER TABLE tasks ADD COLUMN subject_id INT REFERENCES subjects(id) ON DELETE CASCADE;
+ALTER TABLE tasks ALTER COLUMN subject_id DROP NOT NULL;
+
+ALTER TABLE subjects ADD COLUMN user_id BIGINT;
+
 -- Tabelle für Fortschritt (Progress)
 CREATE TABLE IF NOT EXISTS progress (
                                         id SERIAL PRIMARY KEY,
@@ -74,7 +98,8 @@ VALUES
     ('luisa', 'luisa@example.com', 'hashed_password_1', 'Luisa', 'Colon', FALSE),
     ('adminuser', 'admin@example.com', 'hashed_password_0', 'Admin', 'User', TRUE),
     ('ismail', 'ismail@example.com', 'hashed_password_2', 'Ismail', 'Southern', FALSE),
-    ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley', FALSE);
+    ('kory', 'kory@example.com', 'hashed_password_3', 'Kory', 'Morley', FALSE),
+    ('newuser','newuser@example.com','$2a$10$wR6GWKIVkzCjMI9ga254J.dIyjLLnJo9e2FDoVdXHspaXSrIFPvuu', 'New', 'User', FALSE);
 
 -- Beispiel-Daten für Aufgaben
 INSERT INTO tasks (user_id, title, description, due_date, status, priority, ects, points_per_submission, total_submissions, completed_submissions)
