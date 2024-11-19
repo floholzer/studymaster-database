@@ -1,127 +1,126 @@
 # StudyMaster
 
-StudyMaster ist eine Gamification-basierte Plattform für Zeitmanagement, die speziell für Studenten entwickelt wurde, um ihre Lernzeit zu planen und ihre Fortschritte zu verfolgen. Die Plattform verwendet Gamification-Elemente wie Punkte, Level und Badges, um Benutzer zu motivieren und ihre Produktivität zu steigern.
+StudyMaster is a gamification-based time management platform designed specifically for students to plan their study time and track their progress. The platform uses gamification elements such as points, levels, and badges to motivate users and increase their productivity.
 
-## Inhaltsverzeichnis
+## Table of Contents
 
-- [Funktionsübersicht](#funktionsübersicht)
-- [Technologien](#technologien)
+- [Features Overview](#features-overview)
+- [Technologies](#technologies)
 - [Setup](#setup)
-- [Docker-Setup](#docker-setup)
-- [Datenbankstruktur](#datenbankstruktur)
-- [API-Endpunkte](#api-endpunkte)
-- [Mitwirkende](#mitwirkende)
-- [Lizenz](#lizenz)
+- [Docker Setup](#docker-setup)
+- [Database Structure](#database-structure)
+- [API Endpoints](#api-endpoints)
+- [Contributors](#contributors)
+- [License](#license)
 
-## Funktionsübersicht
+## Features Overview
 
-- **Benutzerregistrierung und Login:** Benutzer können sich registrieren und sicher in ihr Konto einloggen.
-- **Aufgabenverwaltung:** Benutzer können Aufgaben erstellen, bearbeiten, löschen und als erledigt markieren.
-- **Gamification-Elemente:** Nutzer sammeln Punkte und steigen in Leveln auf. Badges werden bei bestimmten Meilensteinen verliehen.
-- **Fortschrittsdashboard:** Das Dashboard zeigt offene Aufgaben, Fortschritte und die verdienten Punkte.
-- **Benachrichtigungen:** Benutzer erhalten im Programm Erinnerungen für bevorstehende Aufgaben und werden informiert, wenn sie neue Badges erhalten.
+- **User Registration and Login:** Users can register and securely log into their accounts.
+- **Task Management:** Users can create, edit, delete, and mark tasks as completed.
+- **Gamification Elements:** Users earn points and level up. Badges are awarded at certain milestones.
+- **Progress Dashboard:** The dashboard shows open tasks, progress, and earned points.
+- **Notifications:** Users receive reminders for upcoming tasks and are notified when they earn new badges.
 
-## Technologien
+## Technologies
 
 - **Frontend:** Vue.js
 - **Backend:** Spring Boot
-- **Datenbank:** PostgreSQL (mit Docker)
-- **Containerisierung:** Docker
-- **Testen:** ~ JUnit, Mockito, Vue Test Utils ~
+- **Database:** PostgreSQL (with Docker)
+- **Containerization:** Docker
+- **Testing:** JUnit, Mockito, Vue Test Utils
 
 ## Setup
 
-### Voraussetzungen
+### Prerequisites
 
 - [Node.js](https://nodejs.org/)
 - [Java JDK 11+](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 - [Docker](https://www.docker.com/get-started)
 - [PostgreSQL](https://www.postgresql.org/)
 
-### Lokale Entwicklung
+### Local Development
 
-1. **Frontend (Vue.js) starten:**
+1. **Start Frontend (Vue.js):**
    ```bash
    cd frontend
    npm install
    npm run serve
    ```
 
-2. **Backend (Spring Boot) starten:**
-   Stelle sicher, dass du eine PostgreSQL-Datenbank laufen hast (entweder lokal oder per Docker). Konfiguriere die Datenbankverbindung in der Datei `application.properties`.
+2. **Start Backend (Spring Boot):**
+   Ensure you have a PostgreSQL database running (either locally or via Docker). Configure the database connection in the `application.properties` file.
 
    ```bash
    cd backend
    ./mvnw spring-boot:run
    ```
 
-### Docker-Setup
+## Docker Setup
 
-1. Baue das Docker-Image für die PostgreSQL-Datenbank:
+1. Build the Docker image for the PostgreSQL database:
    ```bash
    docker build -t studymaster-db .
    ```
 
-2. Starte den PostgreSQL-Datenbankcontainer:
+2. Start the PostgreSQL database container:
    ```bash
    docker run -d --name studymaster-db-container -p 5432:5432 studymaster-db
    ```
 
-3. Verifiziere, dass die Datenbank läuft und mit den Beispieltabellen und Daten initialisiert wurde.
+3. Verify that the database is running and initialized with the sample tables and data.
 
-## Datenbankstruktur
+## Database Structure
 
-Die Datenbank besteht aus den folgenden Tabellen:
+The database consists of the following tables:
 
-- **users:** Speichert Benutzerdaten (z. B. username, email, password, etc.).
-- **tasks:** Speichert die Aufgaben der Benutzer (z. B. title, description, due_date, etc.).
-- **progress:** Speichert den Fortschritt der Benutzer für jede Aufgabe.
-- **badges:** Speichert die Badges, die Benutzer durch das Erreichen bestimmter Meilensteine erhalten können.
-- **user_badges:** Verknüpft Benutzer mit den erhaltenen Badges.
+- **users:** Stores user data (e.g., username, email, password, etc.).
+- **tasks:** Stores user tasks (e.g., title, description, due_date, etc.).
+- **progress:** Stores user progress for each task.
+- **badges:** Stores badges that users can earn by reaching certain milestones.
+- **user_badges:** Links users with the badges they have earned.
 
-### Beispiel für die Benutzer-Tabelle:
+### Example of the Users Table:
 
 | id  | username | email              | first_name | last_name | created_at          |
 | --- | -------- | ------------------ | ---------- | --------- | ------------------- |
-| 1   | luisa    | luisa@example.com   | Luisa      | Colon     | 2024-09-01 12:00:00 |
-| 2   | ismail   | ismail@example.com  | Ismail     | Southern  | 2024-09-01 12:05:00 |
+| 1   | luisa    | luisa@example.com  | Luisa      | Colon     | 2024-09-01 12:00:00 |
+| 2   | ismail   | ismail@example.com | Ismail     | Southern  | 2024-09-01 12:05:00 |
 
-## API-Endpunkte
+## API Endpoints
 
-### Benutzerverwaltung
+### User Management
 
-- **POST /api/users/register** - Registriert einen neuen Benutzer.
-- **POST /api/users/login** - Meldet einen Benutzer an.
+- **POST /api/users/register** - Registers a new user.
+- **POST /api/users/login** - Logs in a user.
 
-### Aufgabenverwaltung
+### Task Management
 
-- **GET /api/tasks** - Ruft alle Aufgaben des angemeldeten Benutzers ab.
-- **POST /api/tasks** - Erstellt eine neue Aufgabe.
-- **PUT /api/tasks/:id** - Aktualisiert eine bestehende Aufgabe.
-- **DELETE /api/tasks/:id** - Löscht eine Aufgabe.
+- **GET /api/tasks** - Retrieves all tasks for the logged-in user.
+- **POST /api/tasks** - Creates a new task.
+- **PUT /api/tasks/:id** - Updates an existing task.
+- **DELETE /api/tasks/:id** - Deletes a task.
 
-### Fortschritt und Gamification
+### Progress and Gamification
 
-- **GET /api/progress** - Zeigt den aktuellen Fortschritt des Benutzers an.
-- **GET /api/badges** - Zeigt alle verfügbaren Badges an.
-- **GET /api/user_badges** - Zeigt die vom Benutzer erhaltenen Badges an.
+- **GET /api/progress** - Shows the current progress of the user.
+- **GET /api/badges** - Shows all available badges.
+- **GET /api/user_badges** - Shows the badges earned by the user.
 
-## Mitwirkende
+## Contributors
 
 - **Flo** - wi22b090@technikum-wien.at
 - **Jiri** - wi22b004@technikum-wien.at
 - **Robert** - wi22b073@technikum-wien.at
 
-## Lizenz
+## License
 
-Dieses Projekt steht unter keiner Lizenz.
+This project is not licensed.
 
-
-### **Wichtige Punkte:**
-1. **Projektbeschreibung:** Die Einleitung erklärt das Ziel des Projekts und die Kernfunktionen (Gamification und Zeitmanagement).
-2. **Technologien:** Die verwendeten Technologien (Vue.js, Spring Boot, PostgreSQL, Docker) werden beschrieben.
-3. **Setup-Anleitung:** Es wird detailliert beschrieben, wie das Projekt lokal und in Docker eingerichtet werden kann.
-4. **Datenbankstruktur:** Eine kurze Übersicht der Tabellen in der Datenbank.
-5. **API-Endpunkte:** Die wichtigsten API-Routen für Benutzerverwaltung, Aufgaben und Fortschrittsverfolgung sind aufgeführt.
-6. **Mitwirkende:** Das Team wird namentlich erwähnt.
-
+### **Important Points:**
+1. **Project Description:** The introduction explains the project's goal and core features (gamification and time management).
+2. **Technologies:** The technologies used (Vue.js, Spring Boot, PostgreSQL, Docker) are described.
+3. **Setup Instructions:** Detailed instructions on how to set up the project locally and in Docker.
+4. **Database Structure:** A brief overview of the tables in the database.
+5. **API Endpoints:** The main API routes for user management, tasks, and progress tracking are listed.
+6. **Contributors:** The team is mentioned by name.
+```
