@@ -37,18 +37,21 @@ CREATE TABLE semesters (
                            id SERIAL PRIMARY KEY,
                            user_id INT REFERENCES users(id) ON DELETE CASCADE,
                            name VARCHAR(255) NOT NULL,
-                           ects DECIMAL(3, 1) NOT NULL,
+                           status VARCHAR(50) DEFAULT 'open', -- Werte: 'open', 'completed'
                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Subjects Table
 CREATE TABLE subjects (
                           id SERIAL PRIMARY KEY,
                           semester_id INT REFERENCES semesters(id) ON DELETE CASCADE,
                           name VARCHAR(255) NOT NULL,
-                          ects DECIMAL(3, 1) NOT NULL,
+                          status VARCHAR(50) DEFAULT 'open', -- Werte: 'open', 'completed'
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE subjects ADD COLUMN award VARCHAR(50) DEFAULT 'Keinen';
+
 
 -- Update Tasks Table to Link with Subjects
 ALTER TABLE tasks ADD COLUMN subject_id INT REFERENCES subjects(id) ON DELETE CASCADE;
